@@ -11,11 +11,12 @@ app.use(cookieParser())
 app.use(express.json())
 app.use(express.static("uploads"))
 app.use(cors({
-    origin: true,
+    origin: "http://localhost:5173",
     credentials: true
 
 }))
 app.use("/api/auth", require("./routes/auth.route"))
+app.use("/api/admin", require("./routes/admin.route"))
 app.use("*", async (req, res) => {
     res.status(404).json({ message: "Resource Not Found" })
 })

@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser")
 require("dotenv").config({ path: "./.env" })
 const path = require("path")
 
+
 mongoose.connect(process.env.MONGO_URL)
 const app = express()
 app.use(cookieParser())

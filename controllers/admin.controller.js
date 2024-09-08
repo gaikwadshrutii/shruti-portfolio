@@ -2,6 +2,8 @@ const asyncHandler = require("express-async-handler")
 const { checkEmpty } = require("../utils/checkEmpty")
 const Technology = require("../models/Technology")
 const Social = require("../models/Social")
+const Carousel = require("../models/Carousel")
+const upload = require("../utils/upload")
 
 
 // technology
@@ -56,3 +58,23 @@ exports.deleteSocial = asyncHandler(async (req, res) => {
 })
 
 // carousel
+exports.addCaption = asyncHandler(async (req, res) => {
+    // upload
+    upload(req, res, async (err) => {
+        if (err) {
+            console.log(err)
+            return res.status(400).json({ message: "Multer error", err })
+        }
+        if (req.file) {
+            console.log("inside")
+            const result = await Carousel.create({ ...req.body, image: req.file.filename })
+            res.json({ message: "Caption Add Success", result })
+        } else {
+
+            return res.json({ message: "Thumb Image Is Reqiure" })
+        }
+    })
+
+    const result = await Carousel.create(req.body)
+    res.json({ message: "Caption Add Success", result })
+})

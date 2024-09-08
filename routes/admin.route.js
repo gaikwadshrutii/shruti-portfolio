@@ -15,6 +15,9 @@ router
     .put("/update-social/:id", admin.updateSocial)
     .delete("/delete-social/:id", admin.deleteSocial)
 
+    // Carousel
+    .post("/add-caption", admin.addCaption)
+
 
 
 module.exports = router

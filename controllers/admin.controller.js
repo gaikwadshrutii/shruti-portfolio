@@ -58,6 +58,11 @@ exports.deleteSocial = asyncHandler(async (req, res) => {
 })
 
 // carousel
+exports.getCaption = asyncHandler(async (req, res) => {
+    const result = await Carousel.find()
+    res.json({ message: "Caption Fetch Success", result })
+})
+
 exports.addCaption = asyncHandler(async (req, res) => {
     // upload
     upload(req, res, async (err) => {

@@ -16,6 +16,7 @@ router
     .delete("/delete-social/:id", admin.deleteSocial)
 
     // Carousel
+    .get("/get-caption", admin.getCaption)
     .post("/add-caption", admin.addCaption)
 
 

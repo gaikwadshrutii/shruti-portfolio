@@ -3,7 +3,11 @@ const { checkEmpty } = require("../utils/checkEmpty")
 const Technology = require("../models/Technology")
 const Social = require("../models/Social")
 const Carousel = require("../models/Carousel")
+const path = require("path")
 const upload = require("../utils/upload")
+const cloudinary = require("../utils/cloudinary.config")
+const { error, log } = require("console")
+
 
 
 // technology
@@ -65,31 +69,66 @@ exports.getCaption = asyncHandler(async (req, res) => {
 
 exports.addCaption = asyncHandler(async (req, res) => {
     // upload
-    upload(req, res, async (err) => {
-        if (err) {
-            console.log(err)
-            return res.status(400).json({ message: "Multer error", err })
-        }
-        if (req.file) {
-            console.log("inside")
-            const result = await Carousel.create({ ...req.body, image: req.file.filename })
-            res.json({ message: "Caption Add Success", result })
-        } else {
+    // upload(req, res, async (err) => {
+    //     if (err) {
+    //         console.log(err)
+    //         return res.status(400).json({ message: "Multer error", err })
+    //     }
+    //     if (!req.file) {
+    //         console.log("inside")
+    //         const result = await Carousel.create({ ...req.body, image: req.file.filename })
+    //         res.json({ message: "Caption Add Success", result })
 
-            return res.json({ message: "Thumb Image Is Reqiure" })
+    //     } else {
+
+    //         return res.json({ message: "Thumb Image Is Reqiure" })
+    //     }
+    // })
+
+    upload(req, res, async err => {
+        const { caption } = req.body
+        const { isError, error } = checkEmpty({ caption })
+        if (isError) {
+            return res.status(400).json({ message: "all filed reqiured", error })
         }
+        if (!req.file) {
+            return res.status(400).json({ message: "hero filed reqiured" })
+        }
+        const { secure_url } = await cloudinary.uploader.upload(req.file.path)
+        await Carousel.create({ hero: secure_url, caption })
+        return res.json("carousel create success")
     })
-
     const result = await Carousel.create(req.body)
     res.json({ message: "Caption Add Success", result })
 })
 exports.updateCaption = asyncHandler(async (req, res) => {
-    const { id } = req.params
-    await Carousel.findByIdAndUpdate(id, req.body)
-    res.json({ message: "Caption Update Success" })
+    upload(req, res, async err => {
+        if (err) {
+            console.log(err)
+
+            return res.status(400).json({ message: "Multer error", error: err.message })
+        }
+        const { id } = req.params
+        if (req.file) {
+            const result = await Carousel.findById(id)
+            await cloudinary.uploader.destroy(path.basename(result.hero))
+            const { secure_url } = await cloudinary.uploader.upload(req.file.path)
+
+            await Carousel.findByIdAndUpdate(id, { caption: req.body.caption, hero: secure_url })
+            res.json({ message: "Caption Update Success" })
+        } else {
+            await Carousel.findByIdAndUpdate(id, { caption: req.body.caption })
+            res.json({ message: "Caption Update Success" })
+
+        }
+    })
 })
 exports.deleteCaption = asyncHandler(async (req, res) => {
     const { id } = req.params
+    const result = await Carousel.findById(id)
+    console.log(result)
+
+    await cloudinary.uploader.destroy(path.basename(result.hero))
     await Carousel.findByIdAndDelete(id)
     res.json({ message: "Caption Delete Success" })
 })

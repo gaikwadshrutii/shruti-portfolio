@@ -15,4 +15,4 @@ const storage = multer.diskStorage({
         cb(null, dest)
     },
 })
-module.exports = multer({ storage }).single("thumb")
+module.exports = multer({ storage }).single("hero")

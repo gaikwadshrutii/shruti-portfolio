@@ -18,6 +18,8 @@ router
     // Carousel
     .get("/get-caption", admin.getCaption)
     .post("/add-caption", admin.addCaption)
+    .put("/update-caption/:id", admin.updateCaption)
+    .delete("delete-caption/:id", admin.deleteCaption)
 
 
 

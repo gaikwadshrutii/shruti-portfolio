@@ -83,3 +83,13 @@ exports.addCaption = asyncHandler(async (req, res) => {
     const result = await Carousel.create(req.body)
     res.json({ message: "Caption Add Success", result })
 })
+exports.updateCaption = asyncHandler(async (req, res) => {
+    const { id } = req.params
+    await Carousel.findByIdAndUpdate(id, req.body)
+    res.json({ message: "Caption Update Success" })
+})
+exports.deleteCaption = asyncHandler(async (req, res) => {
+    const { id } = req.params
+    await Carousel.findByIdAndDelete(id)
+    res.json({ message: "Caption Delete Success" })
+})
